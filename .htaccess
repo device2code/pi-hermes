@@ -1,9 +1,34 @@
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+Options All -Indexes
 
 #Headers when using Apache with CGI/FastCGI
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# WWW Redirect.
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# HTTPS Redirect
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# URL Rewrite
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+#RewriteRule ^(.*)$ index.php?url=$1
+
+
+#Hermes routes
+RewriteRule ^system-program-list$ index.php?class=SystemProgramList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^system-program-edit$ index.php?class=SystemProgramForm&method=onEdit&%{QUERY_STRING} [NC]
+RewriteRule ^system-program-ondelete$ index.php?class=SystemProgramList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^system-program-delete$ index.php?class=SystemProgramList&method=Delete&%{QUERY_STRING} [NC]
+
+RewriteRule ^xhr-system-program-list$ engine.php?class=SystemProgramList&method=onReload&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-program-ondelete$ engine.php?class=SystemProgramList&method=onDelete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-program-delete$ engine.php?class=SystemProgramList&method=Delete&%{QUERY_STRING} [NC]
+RewriteRule ^xhr-system-program-edit$ engine.php?class=SystemProgramForm&method=onEdit&%{QUERY_STRING} [NC]
 
 #Adianti Framework Template default routes
 RewriteRule ^system-program-list$ index.php?class=SystemProgramList&method=onReload&%{QUERY_STRING} [NC]
