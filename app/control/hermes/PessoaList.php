@@ -38,7 +38,7 @@ class PessoaList extends TPage
         $this->form->addFields( [ new TLabel('Nome') ], [ $name ] );
         $this->form->addFields( [ new TLabel('Nome Fantasia') ], [ $comercial_name ] );
         $this->form->addFields( [ new TLabel('Tipo') ], [ $type ] );
-        $this->form->addFields( [ new TLabel('Tefone') ], [ $phone ] );
+        $this->form->addFields( [ new TLabel('Telefone') ], [ $phone ] );
 
 
         // set sizes
