@@ -65,11 +65,11 @@ class PessoaList extends TPage
         
 
         // creates the datagrid columns
-        $column_id = new TDataGridColumn('id', 'ID', 'right');
-        $column_name = new TDataGridColumn('name', 'Nome', 'left');
-        $column_comercial_name = new TDataGridColumn('comercial_name', 'Nome Fantasia', 'left');
-        $column_type = new TDataGridColumn('type', 'Tipo', 'left');
-        $column_phone = new TDataGridColumn('phone', 'Tefone', 'left');
+        $column_id = new TDataGridColumn('id', 'ID', 'right', '4%');
+        $column_name = new TDataGridColumn('name', 'Nome', 'left', '33%');
+        $column_comercial_name = new TDataGridColumn('comercial_name', 'Nome Fantasia', 'left', '33%');
+        $column_type = new TDataGridColumn('type', 'Tipo', 'left', '10%');
+        $column_phone = new TDataGridColumn('phone', 'Tefone', 'left', '20%');
 
 
         // add the columns to the DataGrid
@@ -88,7 +88,11 @@ class PessoaList extends TPage
 
         // define the transformer method over image
         $column_name->setTransformer( function($value, $object, $row) {
-            return strtoupper($value);
+            return mb_strtoupper($value);
+        });
+
+        $column_comercial_name->setTransformer( function($value, $object, $row) {
+            return mb_strtoupper($value);
         });
 
 
@@ -270,6 +274,11 @@ class PessoaList extends TPage
                 // iterate the collection of active records
                 foreach ($objects as $object)
                 {
+                    if ($object->type == 'F')
+                        $object->type = 'Física';
+                    
+                    if ($object->type == 'J')
+                        $object->type = 'Jurírica';
                     // add the object inside the datagrid
                     $this->datagrid->addItem($object);
                 }
@@ -317,7 +326,10 @@ class PessoaList extends TPage
             $key=$param['key']; // get the parameter $key
             TTransaction::open('hermes'); // open a transaction with database
             $object = new Pessoa($key, FALSE); // instantiates the Active Record
+            $user = $object->get_system_user();
+            $user->clearParts();            
             $object->delete(); // deletes the object from the database
+            $user->delete();
             TTransaction::close(); // close the transaction
             
             $pos_action = new TAction([__CLASS__, 'onReload']);

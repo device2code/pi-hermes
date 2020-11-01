@@ -92,12 +92,12 @@ class PessoaForm extends TPage
             
             if (empty($pessoa->id))
             {
-                $user = new SystemUser;            
+                $user = new SystemUser;
                 $user->fromArray( (array) $pessoa);
                 $user->login = $user->email;
                 $user->active = 'Y';
                 $user->frontpage_id = 10;
-                $user->password = md5($pessoa->phone);            
+                $user->password = md5($pessoa->phone);
             }
             else
             {
@@ -105,8 +105,8 @@ class PessoaForm extends TPage
                 $user = $user_pessoa->get_system_user();
                 $user->name = $pessoa->name;
                 $user->email = $pessoa->email;
-                $user->login = $pessoa->email;                              
-            }                                
+                $user->login = $pessoa->email;
+            }
             
             $user->store();
             $user->clearParts();                       
@@ -156,12 +156,10 @@ class PessoaForm extends TPage
                 $key = $param['key'];  // get the parameter $key
                 TTransaction::open('hermes'); // open a transaction
                 $object = new Pessoa($key); // instantiates the Active Record
-                $user = new SystemUser($object->get_system_user()->id);
-                $group = $user->getSystemUserGroups()[0]->id;
-                
+                $user = $object->get_system_user();
+                $group = $user->getSystemUserGroups();                
                 $object->email = $user->email;
-                $object->group = $group;
-                                
+                $object->group = $group[0]->id;                                
                 $this->form->setData($object); // fill the form
                 TTransaction::close(); // close the transaction
             }
